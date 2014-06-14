@@ -1,6 +1,6 @@
 # Swift-SRWebClient
 
-A super simple http web client framework for iOS and OSX in Swift, which gives us easy way of communication with the server. 
+A super simple http client framework for iOS and OSX in Swift, which gives us easy way of communication with the server. 
 
 ## Features
 
