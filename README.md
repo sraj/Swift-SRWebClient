@@ -75,12 +75,6 @@ webClient.headers(["key":"value"])
         //process failure response
 	})
 ```
-
-## Acknowledgment
-	
-	Some parts of code and API naming conventions are inspired by [Agent](https://github.com/hallas/agent) Framework. 
-	Licensed under MIT. Thanks to Christoffer Hallas for his contribution.
-
 ## TODO
 
 - Retry mechanisam when a request fails.
@@ -114,3 +108,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ````
+
+## Acknowledgment
+	
+Some parts of code and API naming conventions are inspired by [Agent](https://github.com/hallas/agent) Framework. 
+Licensed under MIT. Thanks to Christoffer Hallas for his contribution.
