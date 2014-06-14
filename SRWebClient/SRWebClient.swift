@@ -17,8 +17,8 @@ class SRWebClient : NSObject
     
     var operationQueue: NSOperationQueue
     var urlRequest: NSMutableURLRequest? = nil
-    
-    let timeoutInterval:NSTimeInterval = 30.0
+    var priority:NSOperationQueuePriority = NSOperationQueuePriority.Normal
+    var timeoutInterval:NSTimeInterval = 30.0
     
     /**
     *  GET class methods
@@ -91,7 +91,7 @@ class SRWebClient : NSObject
     }
     
     /**
-    *  Function to set data for GET/POST request
+    *  Function to set data for GET request
     *
     *  @param data:RequestData? optional value of type Dictionary<String,AnyObject>
     *  @param url:String        request url for GET request
@@ -99,12 +99,23 @@ class SRWebClient : NSObject
     *  @return self instance to support function chaining
     */
     func data(data:RequestData?, url:String) -> SRWebClient {
-        if (data && data!.count > 0) {
-            if(self.urlRequest!.HTTPMethod == "GET") {
-                self.urlRequest!.URL = NSURL(string: url + "?" + self.build(data)!)
-            } else if(self.urlRequest!.HTTPMethod == "POST") {
-                self.urlRequest!.HTTPBody  = self.buildPost(data)!
-            }
+        if (data && data!.count > 0 && self.urlRequest!.HTTPMethod == "GET") {
+            self.urlRequest!.URL = NSURL(string: url + "?" + self.build(data)!)
+        }
+        return self
+    }
+    
+    /**
+    *  Function to set data for POST request
+    *
+    *  @param data:RequestData? optional value of type Dictionary<String,AnyObject>
+    *  @param url:String        request url for GET request
+    *
+    *  @return self instance to support function chaining
+    */
+    func data(data:RequestData?) -> SRWebClient {
+        if (data && data!.count > 0 && self.urlRequest!.HTTPMethod == "POST") {
+            self.urlRequest!.HTTPBody  = self.buildPost(data)!
         }
         return self
     }
@@ -155,7 +166,7 @@ class SRWebClient : NSObject
     *
     *  @return self instance to support function chaining
     */
-    func send(successHandler:SuccessHandler?, failureHandler:FailureHandler?) -> SRWebClient {
+    func send(success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
         var blockOperation:NSBlockOperation = NSBlockOperation({() -> Void in
             
             var response:NSURLResponse?
@@ -167,21 +178,22 @@ class SRWebClient : NSObject
             if(response && httpResponse!.statusCode >= 200 && httpResponse!.statusCode <= 300) {
                 if(NSJSONSerialization.isValidJSONObject(result)) {
                     let json : AnyObject! = NSJSONSerialization.JSONObjectWithData(result, options: nil, error: &error)
-                    if (error && failureHandler) {
-                        failureHandler!(error)
+                    if (error && failure) {
+                        failure!(error)
                     } else if (json) {
-                        successHandler!(json, httpResponse!.statusCode)
+                        success!(json, httpResponse!.statusCode)
                     }
-                } else if (successHandler) {
-                    successHandler!(NSString(data: result, encoding: NSUTF8StringEncoding), httpResponse!.statusCode)
+                } else if (success) {
+                    success!(NSString(data: result, encoding: NSUTF8StringEncoding), httpResponse!.statusCode)
                 }
-            } else if (response && httpResponse && failureHandler) {
-                failureHandler!(NSError(domain: self.urlRequest!.URL.path, code: httpResponse!.statusCode, userInfo: nil))
-            } else if (failureHandler) {
-                failureHandler!(error)
+            } else if (response && httpResponse && failure) {
+                failure!(NSError(domain: self.urlRequest!.URL.path, code: httpResponse!.statusCode, userInfo: nil))
+            } else if (failure) {
+                failure!(error)
             }
         })
         
+        blockOperation.queuePriority = self.priority
         self.operationQueue.addOperation(blockOperation)
         return self
     }

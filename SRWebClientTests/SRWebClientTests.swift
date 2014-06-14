@@ -58,10 +58,10 @@ class SRWebClientTests: XCTestCase {
             failure:{(error:NSError!) -> Void in
                 XCTAssertNil(error)
                 wait = false
-            })
+        })
         self.waitFor(&wait)
     }
-
+    
     func testGetFailure() {
         var wait: Bool = true
         SRWebClient.GET("http://failure.example.com/",
@@ -86,7 +86,7 @@ class SRWebClientTests: XCTestCase {
             failure:{(error:NSError!) -> Void in
                 XCTAssertNotNil(error)
                 wait = false
-            })
+        })
         self.waitFor(&wait)
     }
     
@@ -102,7 +102,7 @@ class SRWebClientTests: XCTestCase {
             failure:{(error:NSError!) -> Void in
                 XCTAssertNil(error)
                 wait = false
-            })
+        })
         self.waitFor(&wait)
     }
     
@@ -121,7 +121,7 @@ class SRWebClientTests: XCTestCase {
             failure:{(error:NSError!) -> Void in
                 XCTAssertNil(error)
                 wait = false
-            })
+        })
         self.waitFor(&wait)
     }
     
@@ -149,8 +149,8 @@ class SRWebClientTests: XCTestCase {
             failure:{(error:NSError!) -> Void in
                 XCTAssertNotNil(error)
                 wait = false
-            })
-        self.waitFor(&wait)
+        })
+        self.waitFor(&wait)        
     }
     
     func testNilSuccessGet() {
@@ -172,7 +172,7 @@ class SRWebClientTests: XCTestCase {
         })
         self.waitFor(&wait)
     }
-
+    
     func testNilPost() {
         SRWebClient.POST("http://failure.example.com/", data: nil, success:nil, failure:nil)
     }
