@@ -8,7 +8,7 @@ A super simple http client framework for iOS and OSX in Swift.
 
 2. NSOperationQueue and NSBlockOperation to execute web requests, using which we can have a elegant way to set queuePriority, threadPriority, qualityOfService and cancel any particular Operation or all the Operations in OperationQueue.
 
-3. Provides functions to Image/`multipart/form-data` data to be sent
+3. Provides function to send Image/`multipart/form-data` data.
 
 4. Function chaining provides us to chain methods and provides more expressive code to make web requests.
 
@@ -131,4 +131,4 @@ THE SOFTWARE.
 
 ## Acknowledgment
 
-Some API's names are similar to [Agent](https://github.com/hallas/agent) Framework. Licensed under MIT. Thanks to Christoffer Hallas for his contribution.
+Some API names are similar to [Agent](https://github.com/hallas/agent) Framework. Licensed under MIT. Thanks to Christoffer Hallas for his contribution.
