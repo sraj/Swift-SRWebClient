@@ -11,20 +11,11 @@ import SRWebClient
 
 class SRWebClientTests: XCTestCase {
     
-    var resDict:Dictionary<String, String>? = nil
-    
     override func setUp() {
-        self.resDict = [
-            "Accept-Language": "en-us",
-            "Host": "headers.jsontest.com",
-            "User-Agent": "xctest (unknown version) CFNetwork/695.1.5 Darwin/13.2.0",
-            "Accept": "*/*"
-        ]
         super.setUp()
     }
     
     override func tearDown() {
-        resDict = nil
         super.tearDown()
     }
     
@@ -59,6 +50,21 @@ class SRWebClientTests: XCTestCase {
                 XCTAssertNil(error)
                 wait = false
         })
+        self.waitFor(&wait)
+    }
+    
+    func testGetDataFuncChainSuccess() {
+        var wait: Bool = true
+        SRWebClient.GET("http://ip.jsontest.com/")
+            .data(["q":"search"])
+            .send({(response:AnyObject!, status:Int) -> Void in
+                XCTAssertNotNil(response)
+                wait = false
+            },
+            failure:{(error:NSError!) -> Void in
+                XCTAssertNil(error)
+                wait = false
+            })
         self.waitFor(&wait)
     }
     

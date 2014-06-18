@@ -32,7 +32,7 @@ class SRWebClient : NSObject
     }
     
     class func GET(url: String, data:RequestData?, headers:Headers?) -> SRWebClient {
-        return SRWebClient.GET(url).headers(headers).data(data, url: url)
+        return SRWebClient.GET(url).headers(headers).data(data)
     }
     
     class func GET(url: String, data:RequestData?, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
@@ -55,7 +55,7 @@ class SRWebClient : NSObject
     }
     
     class func POST(url: String, data:RequestData?, headers:Headers?) -> SRWebClient {
-        return SRWebClient.POST(url).headers(headers).data(data, url:url)
+        return SRWebClient.POST(url).headers(headers).data(data)
     }
     
     class func POST(url: String, data:RequestData?, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
@@ -91,31 +91,23 @@ class SRWebClient : NSObject
     }
     
     /**
-    *  Function to set data for GET request
+    *  Function to set data for POST/GET request
     *
     *  @param data:RequestData? optional value of type Dictionary<String,AnyObject>
-    *  @param url:String        request url for GET request
-    *
-    *  @return self instance to support function chaining
-    */
-    func data(data:RequestData?, url:String) -> SRWebClient {
-        if (data && data!.count > 0 && self.urlRequest!.HTTPMethod == "GET") {
-            self.urlRequest!.URL = NSURL(string: url + "?" + self.build(data)!)
-        }
-        return self
-    }
-    
-    /**
-    *  Function to set data for POST request
-    *
-    *  @param data:RequestData? optional value of type Dictionary<String,AnyObject>
-    *  @param url:String        request url for GET request
     *
     *  @return self instance to support function chaining
     */
     func data(data:RequestData?) -> SRWebClient {
-        if (data && data!.count > 0 && self.urlRequest!.HTTPMethod == "POST") {
-            self.urlRequest!.HTTPBody  = self.buildPost(data)!
+        if(data && data!.count > 0) {
+            switch self.urlRequest!.HTTPMethod! {
+                case "GET":
+                    let url:String = self.urlRequest!.URL!.absoluteString
+                    self.urlRequest!.URL = NSURL(string: url + "?" + self.build(data)!)
+                case "POST":
+                    self.urlRequest!.HTTPBody  = self.buildPost(data)!
+                default:
+                    break
+            }
         }
         return self
     }
