@@ -132,9 +132,9 @@ class SRWebClient : NSObject
     /**
     *  Function to upload image & data using POST request
     *
-    *  @param image:NSData      image data of type NSData
+    *  @param image:NSData       image data of type NSData
     *  @param fieldName:String   field name for uploading image
-    *  @param data:RequestData? optional value of type Dictionary<String,AnyObject>
+    *  @param data:RequestData?  optional value of type Dictionary<String,AnyObject>
     *
     *  @return self instance to support function chaining
     */
@@ -159,7 +159,6 @@ class SRWebClient : NSObject
                     }
                 }
             }
-            
             postData += "--\(boundary)\r\n"
             postData += "Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(Int(NSDate().timeIntervalSince1970*1000)).png\"\r\n"
             postData += "Content-Type: image/png\r\n\r\n"

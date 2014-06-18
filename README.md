@@ -44,7 +44,7 @@ webClient.send({(response:AnyObject!, status:Int) -> Void in
 
 ### Image Upload
 
-```
+```swift
 var image:UIImage = UIImage(named: "apple.jpeg")
 let imageData:NSData = NSData.dataWithData(UIImageJPEGRepresentation(image, 1.0))
 SRWebClient.POST("http://www.tiikoni.com/tis/upload/upload.php")
