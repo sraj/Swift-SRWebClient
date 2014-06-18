@@ -91,38 +91,7 @@ class SRWebClient : NSObject
     }
     
     /**
-    *  Function to set data for POST/GET request
-    *
-    *  @param data:RequestData? optional value of type Dictionary<String,AnyObject>
-    *
-    *  @return self instance to support function chaining
-    */
-    func data(data:RequestData?) -> SRWebClient {
-        if(data && data!.count > 0) {
-            switch self.urlRequest!.HTTPMethod! {
-                case "GET":
-                    let url:String = self.urlRequest!.URL!.absoluteString
-                    self.urlRequest!.URL = NSURL(string: url + "?" + self.build(data)!)
-                case "POST":
-                    self.urlRequest!.HTTPBody  = self.buildPost(data)!
-                default:
-                    break
-            }
-        }
-        return self
-    }
-    
-    /**
-    *  Function to cancel request operation
-    */
-    func cancel() {
-        if(self.operationQueue.operationCount > 0) {
-            self.operationQueue.cancelAllOperations()
-        }
-    }
-    
-    /**
-    *  Function to build get request E.g., a dictionary of ["a":"b","c":"d"] will return "a=b&c=d"
+    *  Function to build GET/POST request data E.g., a dictionary of ["a":"b","c":"d"] will return "a=b&c=d"
     *
     *  @param dataDict:RequestData? request data
     *
@@ -139,14 +108,80 @@ class SRWebClient : NSObject
     }
     
     /**
-    *  Function to build post request and returns NSData object
+    *  Function to set data for POST/GET request
     *
-    *  @param dataDict:RequestData? request data
+    *  @param data:RequestData? optional value of type Dictionary<String,AnyObject>
     *
-    *  @return of type NSData
+    *  @return self instance to support function chaining
     */
-    func buildPost(dataDict:RequestData?) -> NSData? {
-        return self.build(dataDict)!.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+    func data(data:RequestData?) -> SRWebClient {
+        if(data && data!.count > 0) {
+            switch self.urlRequest!.HTTPMethod! {
+                case "GET":
+                    let url:String = self.urlRequest!.URL!.absoluteString
+                    self.urlRequest!.URL = NSURL(string: url + "?" + self.build(data)!)
+                case "POST":
+                    self.urlRequest!.HTTPBody  = self.build(data)!.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+                default:
+                    break
+            }
+        }
+        return self
+    }
+    
+    /**
+    *  Function to upload image & data using POST request
+    *
+    *  @param image:NSData      image data of type NSData
+    *  @param fieldName:String   field name for uploading image
+    *  @param data:RequestData? optional value of type Dictionary<String,AnyObject>
+    *
+    *  @return self instance to support function chaining
+    */
+    func data(image:NSData, fieldName:String, data:RequestData?) -> SRWebClient {
+        if(image.length > 0 && self.urlRequest!.HTTPMethod! == "POST") {
+            
+            let uniqueId = NSProcessInfo.processInfo()!.globallyUniqueString
+            
+            var postBody:NSMutableData = NSMutableData()
+            var postData:String = String()
+            var boundary:String = "------WebKitFormBoundary\(uniqueId)"
+            
+            self.urlRequest?.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField:"Content-Type")
+            
+            if(data && data!.count > 0) {
+                postData += "--\(boundary)\r\n"
+                for (key, value : AnyObject) in data! {
+                    if let value = value as? String {
+                        postData += "--\(boundary)\r\n"
+                        postData += "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n"
+                        postData += "\(value)\r\n"
+                    }
+                }
+            }
+            
+            postData += "--\(boundary)\r\n"
+            postData += "Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(Int(NSDate().timeIntervalSince1970*1000)).png\"\r\n"
+            postData += "Content-Type: image/png\r\n\r\n"
+            postBody.appendData(postData.dataUsingEncoding(NSUTF8StringEncoding))
+            postBody.appendData(image)
+            postData = String()
+            postData += "\r\n"
+            postData += "\r\n--\(boundary)--\r\n"
+            postBody.appendData(postData.dataUsingEncoding(NSUTF8StringEncoding))
+            
+            self.urlRequest!.HTTPBody = NSData(data: postBody)
+        }
+        return self
+    }
+    
+    /**
+    *  Function to cancel request operation
+    */
+    func cancel() {
+        if(self.operationQueue.operationCount > 0) {
+            self.operationQueue.cancelAllOperations()
+        }
     }
     
     /**

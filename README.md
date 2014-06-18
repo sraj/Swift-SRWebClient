@@ -1,6 +1,6 @@
 # Swift-SRWebClient
 
-A super simple http client framework for iOS and OSX in Swift, which gives us easy way of communication with the server. 
+A super simple http client framework for iOS and OSX in Swift. 
 
 ## Features
 
@@ -8,11 +8,15 @@ A super simple http client framework for iOS and OSX in Swift, which gives us ea
 
 2. NSOperationQueue and NSBlockOperation to execute web requests, using which we can have a elegant way to set queuePriority, threadPriority, qualityOfService and cancel any particular Operation or all the Operations in OperationQueue.
 
-3. Function chaining provides us to chain methods and provides more expressive code to make web requests.
+3. Provides functions to Image/`multipart/form-data` data to be sent
 
-4. Json deserialize, when any response is a valid JSON object, otherwise return the actaul response data as string.
+4. Function chaining provides us to chain methods and provides more expressive code to make web requests.
 
-5. Headers, Timeout Interval can be set and controlled for each request.
+5. Json deserialize, when any response is a valid JSON object, otherwise return the actaul response data as string.
+
+6. Headers, Timeout Interval can be set and controlled for each request.
+
+7. Test cases for all the functionalities
 
 ### Success and Failure Closures
 
@@ -35,6 +39,20 @@ webClient.send({(response:AnyObject!, status:Int) -> Void in
 		//process success response
 	}, failure:{(error:NSError!) -> Void in
         //process failure response        
+	})
+```
+
+### Image Upload
+
+```
+var image:UIImage = UIImage(named: "apple.jpeg")
+let imageData:NSData = NSData.dataWithData(UIImageJPEGRepresentation(image, 1.0))
+SRWebClient.POST("http://www.tiikoni.com/tis/upload/upload.php")
+	.data(imageData, fieldName:"file", data:["days":"1","title":"Swift-SRWebClient","caption":"Uploaded via Swift-SRWebClient (https://github.com/sraj/Swift-SRWebClient)"])
+	.send({(response:AnyObject!, status:Int) -> Void in
+		//process success response
+	},failure:{(error:NSError!) -> Void in
+		//process failure response
 	})
 ```
 
@@ -75,10 +93,12 @@ webClient.headers(["key":"value"])
         //process failure response
 	})
 ```
+
 ## TODO
 
 - Retry mechanisam when a request fails.
 - Provide a more elegant way to cancel/suspend each operation.
+- Image download
 - Any features requested.
 
 Contribution welcome!
@@ -110,6 +130,5 @@ THE SOFTWARE.
 ````
 
 ## Acknowledgment
-	
-Some parts of code and API naming conventions are inspired by [Agent](https://github.com/hallas/agent) Framework. 
-Licensed under MIT. Thanks to Christoffer Hallas for his contribution.
+
+Some API's names are similar to [Agent](https://github.com/hallas/agent) Framework. Licensed under MIT. Thanks to Christoffer Hallas for his contribution.

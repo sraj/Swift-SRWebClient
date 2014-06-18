@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B446C4F81951AF4C00718CC1 /* success.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = B446C4F71951AF4C00718CC1 /* success.jpeg */; };
 		B4E9199F194B1DCC00C0AC8B /* SRWebClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4E91993194B1DCC00C0AC8B /* SRWebClient.framework */; };
 		B4E919A6194B1DCC00C0AC8B /* SRWebClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E919A5194B1DCC00C0AC8B /* SRWebClientTests.swift */; };
 		B4E919B0194B1E2100C0AC8B /* SRWebClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E919AF194B1E2100C0AC8B /* SRWebClient.swift */; };
@@ -23,6 +24,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B446C4F71951AF4C00718CC1 /* success.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = success.jpeg; sourceTree = "<group>"; };
 		B4E91993194B1DCC00C0AC8B /* SRWebClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SRWebClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4E91997194B1DCC00C0AC8B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B4E9199E194B1DCC00C0AC8B /* SRWebClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SRWebClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +99,7 @@
 		B4E919A3194B1DCC00C0AC8B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B446C4F71951AF4C00718CC1 /* success.jpeg */,
 				B4E919A4194B1DCC00C0AC8B /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -199,6 +202,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B446C4F81951AF4C00718CC1 /* success.jpeg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

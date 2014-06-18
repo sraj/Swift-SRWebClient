@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import UIKit
 import SRWebClient
 
 class SRWebClientTests: XCTestCase {
@@ -23,6 +24,25 @@ class SRWebClientTests: XCTestCase {
         while (wait) {
             NSRunLoop.currentRunLoop().runMode(NSDefaultRunLoopMode, beforeDate: NSDate(timeIntervalSinceNow: 0.1))
         }
+    }
+    
+    func testPostImageSuccess() {
+        var wait: Bool = true
+        var image:UIImage = UIImage(contentsOfFile:"<PROVIDE_ABSOLUTE_PATH>/Swift-SRWebClient/SRWebClientTests/success.jpeg")
+        let imageData:NSData = NSData.dataWithData(UIImageJPEGRepresentation(image, 1.0))
+        SRWebClient.POST("http://www.tiikoni.com/tis/upload/upload.php")
+            .data(imageData, fieldName:"file", data:["days":"1","title":"Swift-SRWebClient","caption":"Uploaded via Swift-SRWebClient (https://github.com/sraj/Swift-SRWebClient)"])
+            .send({(response:AnyObject!, status:Int) -> Void in
+                //This will produce html document, look for "It can be viewed using this URL:",
+                //it will be something like http://www.tiikoni.com/tis/view/?id=362c1d8
+                println("response:\(response)")
+                XCTAssertNotNil(response)
+                wait = false
+            },failure:{(error:NSError!) -> Void in
+                XCTAssertNil(error)
+                wait = false
+            })
+        self.waitFor(&wait)
     }
     
     func testGetSuccess() {
