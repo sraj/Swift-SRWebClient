@@ -21,7 +21,7 @@ class SRWebClient : NSObject
     var timeoutInterval:NSTimeInterval = 30.0
     
     struct HeaderConstants {
-        static var CONTENT_TYPE:String = "Content-Type"
+        static var CONTENT_TYPE = "Content-Type"
     }
     
     struct MimeConstants {
