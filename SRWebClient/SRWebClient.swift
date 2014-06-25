@@ -20,6 +20,14 @@ class SRWebClient : NSObject
     var priority:NSOperationQueuePriority = NSOperationQueuePriority.Normal
     var timeoutInterval:NSTimeInterval = 30.0
     
+    struct HeaderConstants {
+        static var CONTENT_TYPE:String = "Content-Type"
+    }
+    
+    struct MimeConstants {
+        static var APPLICATION_JSON = "application/json"
+    }
+    
     /**
     *  GET class methods
     */
@@ -104,7 +112,7 @@ class SRWebClient : NSObject
                 dataList.append("\(key)=\(value)")
             }
         }
-        return join("&", dataList)
+        return join("&", dataList).stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
     }
     
     /**
@@ -201,22 +209,24 @@ class SRWebClient : NSObject
             let result:NSData? = NSURLConnection.sendSynchronousRequest(self.urlRequest, returningResponse: &response, error: &error)
             let httpResponse:NSHTTPURLResponse? = response as? NSHTTPURLResponse
             
-            if(response && httpResponse!.statusCode >= 200 && httpResponse!.statusCode <= 300) {
-                if(NSJSONSerialization.isValidJSONObject(result)) {
-                    let json : AnyObject! = NSJSONSerialization.JSONObjectWithData(result, options: nil, error: &error)
-                    if (error && failure) {
-                        failure!(error)
-                    } else if (json) {
-                        success!(json, httpResponse!.statusCode)
+            NSOperationQueue.mainQueue().addOperationWithBlock({() -> Void in
+                if(response && httpResponse!.statusCode >= 200 && httpResponse!.statusCode <= 300) {
+                    if(httpResponse!.allHeaderFields[HeaderConstants.CONTENT_TYPE].containsString(MimeConstants.APPLICATION_JSON)) {
+                        let json:AnyObject? = NSJSONSerialization.JSONObjectWithData(result, options: nil, error: &error)
+                        if (error && failure) {
+                            failure!(error)
+                        } else if (json && success) {
+                            success!(json, httpResponse!.statusCode)
+                        }
+                    } else if (success) {
+                        success!(NSString(data: result, encoding: NSUTF8StringEncoding), httpResponse!.statusCode)
                     }
-                } else if (success) {
-                    success!(NSString(data: result, encoding: NSUTF8StringEncoding), httpResponse!.statusCode)
+                } else if (response && httpResponse && failure) {
+                    failure!(NSError(domain: self.urlRequest!.URL.path, code: httpResponse!.statusCode, userInfo: nil))
+                } else if (failure) {
+                    failure!(error)
                 }
-            } else if (response && httpResponse && failure) {
-                failure!(NSError(domain: self.urlRequest!.URL.path, code: httpResponse!.statusCode, userInfo: nil))
-            } else if (failure) {
-                failure!(error)
-            }
+            })
         })
         
         blockOperation.queuePriority = self.priority
