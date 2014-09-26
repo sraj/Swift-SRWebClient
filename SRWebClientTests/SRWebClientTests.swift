@@ -28,7 +28,7 @@ class SRWebClientTests: XCTestCase {
     
     func testPostImageSuccess() {
         var wait: Bool = true
-        var image:UIImage = UIImage(contentsOfFile:"/Users/sraj/Projects/Swift/Swift-SRWebClient/SRWebClientTests/success.jpeg")
+        var image:UIImage = UIImage(contentsOfFile:"<PROVIDE_ABSOLUTE_PATH>/Swift-SRWebClient/SRWebClientTests/success.jpeg")
         let imageData:NSData = NSData.dataWithData(UIImageJPEGRepresentation(image, 1.0))
         SRWebClient.POST("http://www.tiikoni.com/tis/upload/upload.php")
             .data(imageData, fieldName:"file", data:["days":"1","title":"Swift-SRWebClient","caption":"Uploaded via Swift-SRWebClient (https://github.com/sraj/Swift-SRWebClient)"])
