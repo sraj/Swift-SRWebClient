@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B42CE8BA19D5E6C9008D37FF /* SRWebClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B42CE8B919D5E6C2008D37FF /* SRWebClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B446C4F81951AF4C00718CC1 /* success.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = B446C4F71951AF4C00718CC1 /* success.jpeg */; };
 		B4E9199F194B1DCC00C0AC8B /* SRWebClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4E91993194B1DCC00C0AC8B /* SRWebClient.framework */; };
 		B4E919A6194B1DCC00C0AC8B /* SRWebClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E919A5194B1DCC00C0AC8B /* SRWebClientTests.swift */; };
@@ -24,6 +25,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B42CE8B919D5E6C2008D37FF /* SRWebClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SRWebClient.h; sourceTree = "<group>"; };
 		B446C4F71951AF4C00718CC1 /* success.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = success.jpeg; sourceTree = "<group>"; };
 		B4E91993194B1DCC00C0AC8B /* SRWebClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SRWebClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4E91997194B1DCC00C0AC8B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 		B4E91995194B1DCC00C0AC8B /* SRWebClient */ = {
 			isa = PBXGroup;
 			children = (
+				B42CE8B919D5E6C2008D37FF /* SRWebClient.h */,
 				B4E919AF194B1E2100C0AC8B /* SRWebClient.swift */,
 				B4E91996194B1DCC00C0AC8B /* Supporting Files */,
 			);
@@ -112,6 +115,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B42CE8BA19D5E6C9008D37FF /* SRWebClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -330,7 +334,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = SRWebClient/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -346,7 +350,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = SRWebClient/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

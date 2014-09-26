@@ -28,7 +28,7 @@ class SRWebClientTests: XCTestCase {
     
     func testPostImageSuccess() {
         var wait: Bool = true
-        var image:UIImage = UIImage(contentsOfFile:"<PROVIDE_ABSOLUTE_PATH>/Swift-SRWebClient/SRWebClientTests/success.jpeg")
+        var image:UIImage = UIImage(contentsOfFile:"/Users/sraj/Projects/Swift/Swift-SRWebClient/SRWebClientTests/success.jpeg")
         let imageData:NSData = NSData.dataWithData(UIImageJPEGRepresentation(image, 1.0))
         SRWebClient.POST("http://www.tiikoni.com/tis/upload/upload.php")
             .data(imageData, fieldName:"file", data:["days":"1","title":"Swift-SRWebClient","caption":"Uploaded via Swift-SRWebClient (https://github.com/sraj/Swift-SRWebClient)"])
@@ -39,6 +39,7 @@ class SRWebClientTests: XCTestCase {
                 XCTAssertNotNil(response)
                 wait = false
             },failure:{(error:NSError!) -> Void in
+                println("failure")
                 XCTAssertNil(error)
                 wait = false
             })
@@ -119,7 +120,7 @@ class SRWebClientTests: XCTestCase {
     func testPostSuccess() {
         var wait: Bool = true
         let jsonData = NSJSONSerialization.dataWithJSONObject(["1","2","3"], options: nil, error: nil)
-        let jsonString = NSString(data: jsonData, encoding: NSUTF8StringEncoding)
+        let jsonString = NSString(data: jsonData!, encoding: NSUTF8StringEncoding)
         SRWebClient.POST("http://validate.jsontest.com/", data: ["json":jsonString],
             success:{(response:AnyObject!, status:Int) -> Void in
                 XCTAssertNotNil(response)
@@ -136,7 +137,7 @@ class SRWebClientTests: XCTestCase {
         var wait: Bool = true
         
         let jsonData = NSJSONSerialization.dataWithJSONObject(["1","2","3"], options: nil, error: nil)
-        let jsonString = NSString(data: jsonData, encoding: NSUTF8StringEncoding)
+        let jsonString = NSString(data: jsonData!, encoding: NSUTF8StringEncoding)
         
         SRWebClient.POST("http://validate.jsontest.com/", data: ["json":jsonString],
             headers:["Content-Type":"application/x-www-form-urlencoded charset=utf-8"],
