@@ -79,7 +79,7 @@ public class SRWebClient : NSObject
     */
     init(method:String, url:String) {
         self.operationQueue = NSOperationQueue()
-        self.urlRequest = NSMutableURLRequest(URL: NSURL(string: url))
+        self.urlRequest = NSMutableURLRequest(URL: NSURL(string: url)!)
         self.urlRequest!.HTTPMethod = method
         self.urlRequest!.timeoutInterval = timeoutInterval
     }
@@ -168,7 +168,7 @@ public class SRWebClient : NSObject
                 }
             }
             postData += "--\(boundary)\r\n"
-            postData += "Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(Int(NSDate().timeIntervalSince1970*1000)).png\"\r\n"
+            postData += "Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(Int64(NSDate().timeIntervalSince1970*1000)).png\"\r\n"
             postData += "Content-Type: image/png\r\n\r\n"
             postBody.appendData(postData.dataUsingEncoding(NSUTF8StringEncoding)!)
             postBody.appendData(image)
