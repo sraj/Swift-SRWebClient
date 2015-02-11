@@ -168,8 +168,8 @@ public class SRWebClient : NSObject
                 }
             }
             postData += "--\(boundary)\r\n"
-            postData += "Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(Int64(NSDate().timeIntervalSince1970*1000)).png\"\r\n"
-            postData += "Content-Type: image/png\r\n\r\n"
+            postData += "Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(Int64(NSDate().timeIntervalSince1970*1000)).jpg\"\r\n"
+            postData += "Content-Type: image/jpeg\r\n\r\n"
             postBody.appendData(postData.dataUsingEncoding(NSUTF8StringEncoding)!)
             postBody.appendData(image)
             postData = String()
