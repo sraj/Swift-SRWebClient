@@ -36,7 +36,7 @@ public class SRWebClient : NSObject
     }
     
     public class func GET(url: String, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
-        return SRWebClient.GET(url).send(success, failure)
+        return SRWebClient.GET(url).send(success, failure: failure)
     }
     
     public class func GET(url: String, data:RequestData?, headers:Headers?) -> SRWebClient {
@@ -44,11 +44,11 @@ public class SRWebClient : NSObject
     }
     
     public class func GET(url: String, data:RequestData?, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
-        return SRWebClient.GET(url, data: data, headers:nil).send(success, failure)
+        return SRWebClient.GET(url, data: data, headers:nil).send(success, failure: failure)
     }
     
     public class func GET(url: String, data:RequestData?, headers:Headers?, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
-        return SRWebClient.GET(url, data: data, headers:headers).send(success, failure)
+        return SRWebClient.GET(url, data: data, headers:headers).send(success, failure: failure)
     }
     
     /**
@@ -59,7 +59,7 @@ public class SRWebClient : NSObject
     }
     
     public class func POST(url: String, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
-        return SRWebClient.POST(url).send(success, failure)
+        return SRWebClient.POST(url).send(success, failure: failure)
     }
     
     public class func POST(url: String, data:RequestData?, headers:Headers?) -> SRWebClient {
@@ -67,11 +67,11 @@ public class SRWebClient : NSObject
     }
     
     public class func POST(url: String, data:RequestData?, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
-        return SRWebClient.POST(url, data: data, headers:nil).send(success, failure)
+        return SRWebClient.POST(url, data: data, headers:nil).send(success, failure: failure)
     }
     
     public class func POST(url: String, data:RequestData?, headers:Headers?, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
-        return SRWebClient.POST(url, data: data, headers:headers).send(success, failure)
+        return SRWebClient.POST(url, data: data, headers:headers).send(success, failure: failure)
     }
     
     /**
@@ -201,7 +201,7 @@ public class SRWebClient : NSObject
     *  @return self instance to support function chaining
     */
     public func send(success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
-        var blockOperation:NSBlockOperation = NSBlockOperation({() -> Void in
+        var blockOperation:NSBlockOperation = NSBlockOperation(block: {() -> Void in
             
             var response:NSURLResponse?
             var error:NSError?
@@ -211,7 +211,7 @@ public class SRWebClient : NSObject
             
             NSOperationQueue.mainQueue().addOperationWithBlock({() -> Void in
                 if (httpResponse != nil && httpResponse!.statusCode >= 200 && httpResponse!.statusCode <= 300) {
-                    let respHeaders = httpResponse!.allHeaderFields as Dictionary<String,String>
+                    let respHeaders = httpResponse!.allHeaderFields as! Dictionary<String,String>
                     if respHeaders[HeaderConstants.CONTENT_TYPE] == MimeConstants.APPLICATION_JSON {
                         let json:AnyObject? = NSJSONSerialization.JSONObjectWithData(result!, options: nil, error: &error)
                         if (error != nil && failure != nil) {

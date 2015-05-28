@@ -28,8 +28,8 @@ class SRWebClientTests: XCTestCase {
     
     func testPostImageSuccess() {
         var wait: Bool = true
-        var image:UIImage = UIImage(contentsOfFile:"<PROVIDE_ABSOLUTE_PATH>/Swift-SRWebClient/SRWebClientTests/success.jpeg")
-        let imageData:NSData = NSData.dataWithData(UIImageJPEGRepresentation(image, 1.0))
+        var image:UIImage = UIImage(contentsOfFile:"<PROVIDE_ABSOLUTE_PATH>/Swift-SRWebClient/SRWebClientTests/success.jpeg")!
+        let imageData:NSData = NSData(data: UIImageJPEGRepresentation(image, 1.0))
         SRWebClient.POST("http://www.tiikoni.com/tis/upload/upload.php")
             .data(imageData, fieldName:"file", data:["days":"1","title":"Swift-SRWebClient","caption":"Uploaded via Swift-SRWebClient (https://github.com/sraj/Swift-SRWebClient)"])
             .send({(response:AnyObject!, status:Int) -> Void in
@@ -121,7 +121,7 @@ class SRWebClientTests: XCTestCase {
         var wait: Bool = true
         let jsonData = NSJSONSerialization.dataWithJSONObject(["1","2","3"], options: nil, error: nil)
         let jsonString = NSString(data: jsonData!, encoding: NSUTF8StringEncoding)
-        SRWebClient.POST("http://validate.jsontest.com/", data: ["json":jsonString],
+        SRWebClient.POST("http://validate.jsontest.com/", data: ["json" : jsonString!],
             success:{(response:AnyObject!, status:Int) -> Void in
                 XCTAssertNotNil(response)
                 wait = false
@@ -135,11 +135,9 @@ class SRWebClientTests: XCTestCase {
     
     func testPostHeaderSuccess() {
         var wait: Bool = true
-        
         let jsonData = NSJSONSerialization.dataWithJSONObject(["1","2","3"], options: nil, error: nil)
         let jsonString = NSString(data: jsonData!, encoding: NSUTF8StringEncoding)
-        
-        SRWebClient.POST("http://validate.jsontest.com/", data: ["json":jsonString],
+        SRWebClient.POST("http://validate.jsontest.com/", data: ["json":jsonString!],
             headers:["Content-Type":"application/x-www-form-urlencoded charset=utf-8"],
             success:{(response:AnyObject!, status:Int) -> Void in
                 XCTAssertNotNil(response)
