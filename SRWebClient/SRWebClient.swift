@@ -108,11 +108,11 @@ public class SRWebClient : NSObject
     func build(dataDict:RequestData?) -> String? {
         var dataList: [String] = [String]()
         if(dataDict != nil) {
-            for (key, value : AnyObject) in dataDict! {
+            for (key, value) in dataDict! {
                 dataList.append("\(key)=\(value)")
             }
         }
-        return join("&", dataList).stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+        return "&".join(dataList).stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
     }
     
     /**
@@ -126,7 +126,7 @@ public class SRWebClient : NSObject
         if(data != nil && data!.count > 0) {
             switch self.urlRequest!.HTTPMethod {
             case "GET":
-                let url:String = self.urlRequest!.URL!.absoluteString!
+                let url:String = self.urlRequest!.URL!.absoluteString
                 self.urlRequest!.URL = NSURL(string: url + "?" + self.build(data)!)
             case "POST":
                 self.urlRequest!.HTTPBody  = self.build(data)!.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
@@ -151,15 +151,15 @@ public class SRWebClient : NSObject
             
             let uniqueId = NSProcessInfo.processInfo().globallyUniqueString
             
-            var postBody:NSMutableData = NSMutableData()
+            let postBody:NSMutableData = NSMutableData()
             var postData:String = String()
-            var boundary:String = "------WebKitFormBoundary\(uniqueId)"
+            let boundary:String = "------WebKitFormBoundary\(uniqueId)"
             
             self.urlRequest?.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField:"Content-Type")
             
             if(data != nil && data!.count > 0) {
                 postData += "--\(boundary)\r\n"
-                for (key, value : AnyObject) in data! {
+                for (key, value) in data! {
                     if let value = value as? String {
                         postData += "--\(boundary)\r\n"
                         postData += "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n"
@@ -201,19 +201,35 @@ public class SRWebClient : NSObject
     *  @return self instance to support function chaining
     */
     public func send(success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
-        var blockOperation:NSBlockOperation = NSBlockOperation(block: {() -> Void in
+        let blockOperation:NSBlockOperation = NSBlockOperation(block: {() -> Void in
             
             var response:NSURLResponse?
             var error:NSError?
             
-            let result:NSData? = NSURLConnection.sendSynchronousRequest(self.urlRequest!, returningResponse: &response, error: &error)
+            let result:NSData?
+            do {
+                result = try NSURLConnection.sendSynchronousRequest(self.urlRequest!, returningResponse: &response)
+            } catch let error1 as NSError {
+                error = error1
+                result = nil
+            } catch {
+                fatalError()
+            }
             let httpResponse:NSHTTPURLResponse? = response as? NSHTTPURLResponse
             
             NSOperationQueue.mainQueue().addOperationWithBlock({() -> Void in
                 if (httpResponse != nil && httpResponse!.statusCode >= 200 && httpResponse!.statusCode <= 300) {
                     let respHeaders = httpResponse!.allHeaderFields as! Dictionary<String,String>
                     if respHeaders[HeaderConstants.CONTENT_TYPE] == MimeConstants.APPLICATION_JSON {
-                        let json:AnyObject? = NSJSONSerialization.JSONObjectWithData(result!, options: nil, error: &error)
+                        let json:AnyObject?
+                        do {
+                            json = try NSJSONSerialization.JSONObjectWithData(result!, options: [])
+                        } catch let error1 as NSError {
+                            error = error1
+                            json = nil
+                        } catch {
+                            fatalError()
+                        }
                         if (error != nil && failure != nil) {
                             failure!(error)
                         } else if (json != nil && success != nil) {
