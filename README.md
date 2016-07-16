@@ -1,5 +1,7 @@
 # Swift-SRWebClient
 
+Note: This fork was updated to work with Swift 2.1.1
+
 A super simple http client framework for iOS and OSX in Swift. 
 
 ## Features
