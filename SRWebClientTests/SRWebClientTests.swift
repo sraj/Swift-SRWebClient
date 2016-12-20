@@ -20,26 +20,26 @@ class SRWebClientTests: XCTestCase {
         super.tearDown()
     }
     
-    func waitFor (inout wait: Bool) {
+    func waitFor (_ wait: inout Bool) {
         while (wait) {
-            NSRunLoop.currentRunLoop().runMode(NSDefaultRunLoopMode, beforeDate: NSDate(timeIntervalSinceNow: 0.1))
+            RunLoop.current.run(mode: RunLoopMode.defaultRunLoopMode, before: Date(timeIntervalSinceNow: 0.1))
         }
     }
     
     func testPostImageSuccess() {
         var wait: Bool = true
-        var image:UIImage = UIImage(contentsOfFile:"<PROVIDE_ABSOLUTE_PATH>/Swift-SRWebClient/SRWebClientTests/success.jpeg")!
-        let imageData:NSData = NSData(data: UIImageJPEGRepresentation(image, 1.0))
-        SRWebClient.POST("http://www.tiikoni.com/tis/upload/upload.php")
+        let image:UIImage = UIImage(contentsOfFile:"/Users/suman/Projects/iOS/Swift-SRWebClient/SRWebClientTests/success.jpeg")!
+        let imageData:Data = NSData(data: UIImageJPEGRepresentation(image, 1.0)!) as Data
+        _ = SRWebClient.POST("http://www.tiikoni.com/tis/upload/upload.php")
             .data(imageData, fieldName:"file", data:["days":"1","title":"Swift-SRWebClient","caption":"Uploaded via Swift-SRWebClient (https://github.com/sraj/Swift-SRWebClient)"])
-            .send({(response:AnyObject!, status:Int) -> Void in
+            .send({(response:Any!, status:Int) -> Void in
                 //This will produce html document, look for "It can be viewed using this URL:",
                 //it will be something like http://www.tiikoni.com/tis/view/?id=362c1d8
-                println("response:\(response)")
+                print("response:\(response)")
                 XCTAssertNotNil(response)
                 wait = false
             },failure:{(error:NSError!) -> Void in
-                println("failure")
+                print("failure")
                 XCTAssertNil(error)
                 wait = false
             })
@@ -48,8 +48,8 @@ class SRWebClientTests: XCTestCase {
     
     func testGetSuccess() {
         var wait: Bool = true
-        SRWebClient.GET("http://headers.jsontest.com/",
-            success:{(response:AnyObject!, status:Int) -> Void in
+        _ = SRWebClient.GET("http://headers.jsontest.com/",
+            success:{(response:Any!, status:Int) -> Void in
                 XCTAssertNotNil(response)
                 wait = false
             },
@@ -62,8 +62,8 @@ class SRWebClientTests: XCTestCase {
     
     func testGetDataSuccess() {
         var wait: Bool = true
-        SRWebClient.GET("http://ip.jsontest.com/", data: ["q":"search"],
-            success:{(response:AnyObject!, status:Int) -> Void in
+        _ = SRWebClient.GET("http://ip.jsontest.com/", data: ["q":"search"],
+            success:{(response:Any!, status:Int) -> Void in
                 XCTAssertNotNil(response)
                 wait = false
             },
@@ -76,9 +76,9 @@ class SRWebClientTests: XCTestCase {
     
     func testGetDataFuncChainSuccess() {
         var wait: Bool = true
-        SRWebClient.GET("http://ip.jsontest.com/")
+        _ = SRWebClient.GET("http://ip.jsontest.com/")
             .data(["q":"search"])
-            .send({(response:AnyObject!, status:Int) -> Void in
+            .send({(response:Any!, status:Int) -> Void in
                 XCTAssertNotNil(response)
                 wait = false
             },
@@ -91,8 +91,8 @@ class SRWebClientTests: XCTestCase {
     
     func testGetFailure() {
         var wait: Bool = true
-        SRWebClient.GET("http://failure.example.com/",
-            success:{(response:AnyObject!, status:Int) -> Void in
+        _ = SRWebClient.GET("http://failure.example.com/",
+            success:{(response:Any!, status:Int) -> Void in
                 XCTAssertNil(response)
                 wait = false
             },
@@ -105,8 +105,8 @@ class SRWebClientTests: XCTestCase {
     
     func testGetDataFailure() {
         var wait: Bool = true
-        SRWebClient.GET("http://failure.example.com/", data: ["q":"search"],
-            success:{(response:AnyObject!, status:Int) -> Void in
+        _ = SRWebClient.GET("http://failure.example.com/", data: ["q":"search"],
+            success:{(response:Any!, status:Int) -> Void in
                 XCTAssertNil(response)
                 wait = false
             },
@@ -119,10 +119,10 @@ class SRWebClientTests: XCTestCase {
     
     func testPostSuccess() {
         var wait: Bool = true
-        let jsonData = NSJSONSerialization.dataWithJSONObject(["1","2","3"], options: nil, error: nil)
-        let jsonString = NSString(data: jsonData!, encoding: NSUTF8StringEncoding)
-        SRWebClient.POST("http://validate.jsontest.com/", data: ["json" : jsonString!],
-            success:{(response:AnyObject!, status:Int) -> Void in
+        let jsonData = try? JSONSerialization.data(withJSONObject: ["1","2","3"], options: [])
+        let jsonString = NSString(data: jsonData!, encoding: String.Encoding.utf8.rawValue)
+        _ = SRWebClient.POST("http://validate.jsontest.com/", data: ["json" : jsonString!],
+            success:{(response:Any!, status:Int) -> Void in
                 XCTAssertNotNil(response)
                 wait = false
             },
@@ -135,11 +135,11 @@ class SRWebClientTests: XCTestCase {
     
     func testPostHeaderSuccess() {
         var wait: Bool = true
-        let jsonData = NSJSONSerialization.dataWithJSONObject(["1","2","3"], options: nil, error: nil)
-        let jsonString = NSString(data: jsonData!, encoding: NSUTF8StringEncoding)
-        SRWebClient.POST("http://validate.jsontest.com/", data: ["json":jsonString!],
+        let jsonData = try? JSONSerialization.data(withJSONObject: ["1","2","3"], options: [])
+        let jsonString = NSString(data: jsonData!, encoding: String.Encoding.utf8.rawValue)
+        _ = SRWebClient.POST("http://validate.jsontest.com/", data: ["json":jsonString!],
             headers:["Content-Type":"application/x-www-form-urlencoded charset=utf-8"],
-            success:{(response:AnyObject!, status:Int) -> Void in
+            success:{(response:Any!, status:Int) -> Void in
                 XCTAssertNotNil(response)
                 wait = false
             },
@@ -152,8 +152,8 @@ class SRWebClientTests: XCTestCase {
     
     func testPostFailure() {
         var wait: Bool = true
-        SRWebClient.POST("http://failure.example.com/",
-            success:{(response:AnyObject!, status:Int) -> Void in
+        _ = SRWebClient.POST("http://failure.example.com/",
+            success:{(response:Any!, status:Int) -> Void in
                 XCTAssertNil(response)
                 wait = false
             },
@@ -166,8 +166,8 @@ class SRWebClientTests: XCTestCase {
     
     func testPostDataFailure() {
         var wait: Bool = true
-        SRWebClient.POST("http://failure.example.com/", data: ["data1":"example","data2":"example"],
-            success:{(response:AnyObject!, status:Int) -> Void in
+        _ = SRWebClient.POST("http://failure.example.com/", data: ["data1":"example","data2":"example"],
+            success:{(response:Any!, status:Int) -> Void in
                 XCTAssertNil(response)
                 wait = false
             },
@@ -180,8 +180,8 @@ class SRWebClientTests: XCTestCase {
     
     func testNilSuccessGet() {
         var wait: Bool = true
-        SRWebClient.GET("http://headers.jsontest.com/",
-            success:{(response:AnyObject!, status:Int) -> Void in
+        _ = SRWebClient.GET("http://headers.jsontest.com/",
+            success:{(response:Any!, status:Int) -> Void in
                 XCTAssertNotNil(response)
                 wait = false
             }, failure:nil)
@@ -190,7 +190,7 @@ class SRWebClientTests: XCTestCase {
     
     func testNilFailureGet() {
         var wait: Bool = true
-        SRWebClient.GET("http://failure.example.com/",
+        _ = SRWebClient.GET("http://failure.example.com/",
             success:nil, failure:{(error:NSError!) -> Void in
                 XCTAssertNotNil(error)
                 wait = false
@@ -199,6 +199,6 @@ class SRWebClientTests: XCTestCase {
     }
     
     func testNilPost() {
-        SRWebClient.POST("http://failure.example.com/", data: nil, success:nil, failure:nil)
+        _ = SRWebClient.POST("http://failure.example.com/", data: nil, success:nil, failure:nil)
     }
 }

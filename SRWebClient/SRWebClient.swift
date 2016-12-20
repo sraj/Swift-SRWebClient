@@ -11,14 +11,14 @@ import Foundation
 public class SRWebClient : NSObject
 {
     public typealias Headers = Dictionary<String, String>
-    public typealias RequestData = Dictionary<String,AnyObject>
-    public typealias SuccessHandler = (AnyObject!, Int) -> Void
+    public typealias RequestData = Dictionary<String,Any>
+    public typealias SuccessHandler = (Any?, Int) -> Void
     public typealias FailureHandler = (NSError!) -> Void
     
-    var operationQueue: NSOperationQueue
+    var operationQueue: OperationQueue
     var urlRequest: NSMutableURLRequest? = nil
-    var priority:NSOperationQueuePriority = NSOperationQueuePriority.Normal
-    var timeoutInterval:NSTimeInterval = 30.0
+    var priority:Operation.QueuePriority = Operation.QueuePriority.normal
+    var timeoutInterval:TimeInterval = 30.0
     
     struct HeaderConstants {
         static var CONTENT_TYPE = "Content-Type"
@@ -31,46 +31,46 @@ public class SRWebClient : NSObject
     /**
     *  GET class methods
     */
-    public class func GET(url: String) -> SRWebClient {
+    public class func GET(_ url: String) -> SRWebClient {
         return SRWebClient(method: "GET", url: url)
     }
     
-    public class func GET(url: String, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
+    public class func GET(_ url: String, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
         return SRWebClient.GET(url).send(success, failure: failure)
     }
     
-    public class func GET(url: String, data:RequestData?, headers:Headers?) -> SRWebClient {
+    public class func GET(_ url: String, data:RequestData?, headers:Headers?) -> SRWebClient {
         return SRWebClient.GET(url).headers(headers).data(data)
     }
     
-    public class func GET(url: String, data:RequestData?, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
+    public class func GET(_ url: String, data:RequestData?, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
         return SRWebClient.GET(url, data: data, headers:nil).send(success, failure: failure)
     }
     
-    public class func GET(url: String, data:RequestData?, headers:Headers?, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
+    public class func GET(_ url: String, data:RequestData?, headers:Headers?, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
         return SRWebClient.GET(url, data: data, headers:headers).send(success, failure: failure)
     }
     
     /**
     *  POST class methods
     */
-    public class func POST(url: String) -> SRWebClient {
+    public class func POST(_ url: String) -> SRWebClient {
         return SRWebClient(method: "POST", url: url)
     }
     
-    public class func POST(url: String, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
+    public class func POST(_ url: String, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
         return SRWebClient.POST(url).send(success, failure: failure)
     }
     
-    public class func POST(url: String, data:RequestData?, headers:Headers?) -> SRWebClient {
+    public class func POST(_ url: String, data:RequestData?, headers:Headers?) -> SRWebClient {
         return SRWebClient.POST(url).headers(headers).data(data)
     }
     
-    public class func POST(url: String, data:RequestData?, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
+    public class func POST(_ url: String, data:RequestData?, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
         return SRWebClient.POST(url, data: data, headers:nil).send(success, failure: failure)
     }
     
-    public class func POST(url: String, data:RequestData?, headers:Headers?, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
+    public class func POST(_ url: String, data:RequestData?, headers:Headers?, success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
         return SRWebClient.POST(url, data: data, headers:headers).send(success, failure: failure)
     }
     
@@ -78,9 +78,9 @@ public class SRWebClient : NSObject
     *  Instance initialization
     */
     init(method:String, url:String) {
-        self.operationQueue = NSOperationQueue()
-        self.urlRequest = NSMutableURLRequest(URL: NSURL(string: url)!)
-        self.urlRequest!.HTTPMethod = method
+        self.operationQueue = OperationQueue()
+        self.urlRequest = NSMutableURLRequest(url: URL(string: url)!)
+        self.urlRequest!.httpMethod = method
         self.urlRequest!.timeoutInterval = timeoutInterval
     }
     
@@ -91,7 +91,7 @@ public class SRWebClient : NSObject
     *
     *  @return self instance to support function chaining
     */
-    public func headers(headers: Headers?) -> SRWebClient {
+    public func headers(_ headers: Headers?) -> SRWebClient {
         if (headers != nil) {
             self.urlRequest!.allHTTPHeaderFields = headers!
         }
@@ -105,14 +105,14 @@ public class SRWebClient : NSObject
     *
     *  @return of type String
     */
-    func build(dataDict:RequestData?) -> String? {
+    func build(_ dataDict:RequestData?) -> String? {
         var dataList: [String] = [String]()
         if(dataDict != nil) {
-            for (key, value : AnyObject) in dataDict! {
+            for (key, value) in dataDict! {
                 dataList.append("\(key)=\(value)")
             }
         }
-        return join("&", dataList).stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+        return dataList.joined(separator: "&").addingPercentEncoding(withAllowedCharacters:NSCharacterSet.urlQueryAllowed)
     }
     
     /**
@@ -122,14 +122,14 @@ public class SRWebClient : NSObject
     *
     *  @return self instance to support function chaining
     */
-    public func data(data:RequestData?) -> SRWebClient {
+    public func data(_ data:RequestData?) -> SRWebClient {
         if(data != nil && data!.count > 0) {
-            switch self.urlRequest!.HTTPMethod {
+            switch self.urlRequest!.httpMethod {
             case "GET":
-                let url:String = self.urlRequest!.URL!.absoluteString!
-                self.urlRequest!.URL = NSURL(string: url + "?" + self.build(data)!)
+                let url:String = self.urlRequest!.url!.absoluteString
+                self.urlRequest!.url = URL(string: url + "?" + self.build(data)!)
             case "POST":
-                self.urlRequest!.HTTPBody  = self.build(data)!.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+                self.urlRequest!.httpBody  = self.build(data)!.data(using: String.Encoding.utf8, allowLossyConversion: true)
             default:
                 break
             }
@@ -146,20 +146,20 @@ public class SRWebClient : NSObject
     *
     *  @return self instance to support function chaining
     */
-    public func data(image:NSData, fieldName:String, data:RequestData?) -> SRWebClient {
-        if(image.length > 0 && self.urlRequest!.HTTPMethod == "POST") {
+    open func data(_ image:Data, fieldName:String, data:RequestData?) -> SRWebClient {
+        if(image.count > 0 && self.urlRequest!.httpMethod == "POST") {
             
-            let uniqueId = NSProcessInfo.processInfo().globallyUniqueString
+            let uniqueId = ProcessInfo.processInfo.globallyUniqueString
             
-            var postBody:NSMutableData = NSMutableData()
+            let postBody:NSMutableData = NSMutableData()
             var postData:String = String()
-            var boundary:String = "------WebKitFormBoundary\(uniqueId)"
+            let boundary:String = "------WebKitFormBoundary\(uniqueId)"
             
             self.urlRequest?.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField:"Content-Type")
             
             if(data != nil && data!.count > 0) {
                 postData += "--\(boundary)\r\n"
-                for (key, value : AnyObject) in data! {
+                for (key, value) in data! {
                     if let value = value as? String {
                         postData += "--\(boundary)\r\n"
                         postData += "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n"
@@ -168,16 +168,16 @@ public class SRWebClient : NSObject
                 }
             }
             postData += "--\(boundary)\r\n"
-            postData += "Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(Int64(NSDate().timeIntervalSince1970*1000)).jpg\"\r\n"
+            postData += "Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(Int64(Date().timeIntervalSince1970*1000)).jpg\"\r\n"
             postData += "Content-Type: image/jpeg\r\n\r\n"
-            postBody.appendData(postData.dataUsingEncoding(NSUTF8StringEncoding)!)
-            postBody.appendData(image)
+            postBody.append(postData.data(using: String.Encoding.utf8)!)
+            postBody.append(image)
             postData = String()
             postData += "\r\n"
             postData += "\r\n--\(boundary)--\r\n"
-            postBody.appendData(postData.dataUsingEncoding(NSUTF8StringEncoding)!)
+            postBody.append(postData.data(using: String.Encoding.utf8)!)
             
-            self.urlRequest!.HTTPBody = NSData(data: postBody)
+            self.urlRequest!.httpBody = NSData(data: postBody as Data) as Data
         }
         return self
     }
@@ -185,7 +185,7 @@ public class SRWebClient : NSObject
     /**
     *  Function to cancel request operation
     */
-    public func cancel() {
+    open func cancel() {
         if(self.operationQueue.operationCount > 0) {
             self.operationQueue.cancelAllOperations()
         }
@@ -200,30 +200,46 @@ public class SRWebClient : NSObject
     *
     *  @return self instance to support function chaining
     */
-    public func send(success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
-        var blockOperation:NSBlockOperation = NSBlockOperation(block: {() -> Void in
+    open func send(_ success:SuccessHandler?, failure:FailureHandler?) -> SRWebClient {
+        let blockOperation:BlockOperation = BlockOperation(block: {() -> Void in
             
-            var response:NSURLResponse?
+            var response:URLResponse?
             var error:NSError?
             
-            let result:NSData? = NSURLConnection.sendSynchronousRequest(self.urlRequest!, returningResponse: &response, error: &error)
-            let httpResponse:NSHTTPURLResponse? = response as? NSHTTPURLResponse
+            let result:Data?
+            do {
+                result = try NSURLConnection.sendSynchronousRequest(self.urlRequest! as URLRequest, returning: &response)
+            } catch let error1 as NSError {
+                error = error1
+                result = nil
+            } catch {
+                fatalError()
+            }
+            let httpResponse:HTTPURLResponse? = response as? HTTPURLResponse
             
-            NSOperationQueue.mainQueue().addOperationWithBlock({() -> Void in
+            OperationQueue.main.addOperation({() -> Void in
                 if (httpResponse != nil && httpResponse!.statusCode >= 200 && httpResponse!.statusCode <= 300) {
                     let respHeaders = httpResponse!.allHeaderFields as! Dictionary<String,String>
                     if respHeaders[HeaderConstants.CONTENT_TYPE] == MimeConstants.APPLICATION_JSON {
-                        let json:AnyObject? = NSJSONSerialization.JSONObjectWithData(result!, options: nil, error: &error)
+                        let json:Any?
+                        do {
+                            json = try JSONSerialization.jsonObject(with: result!, options: [])
+                        } catch let error1 as NSError {
+                            error = error1
+                            json = nil
+                        } catch {
+                            fatalError()
+                        }
                         if (error != nil && failure != nil) {
                             failure!(error)
                         } else if (json != nil && success != nil) {
                             success!(json, httpResponse!.statusCode)
                         }
                     } else if (success != nil) {
-                        success!(NSString(data: result!, encoding: NSUTF8StringEncoding), httpResponse!.statusCode)
+                        success!(NSString(data: result!, encoding: String.Encoding.utf8.rawValue), httpResponse!.statusCode)
                     }
                 } else if (response != nil && httpResponse != nil && failure != nil) {
-                    failure!(NSError(domain: self.urlRequest!.URL!.path!, code: httpResponse!.statusCode, userInfo: nil))
+                    failure!(NSError(domain: self.urlRequest!.url!.path, code: httpResponse!.statusCode, userInfo: nil))
                 } else if (failure != nil) {
                     failure!(error)
                 }
